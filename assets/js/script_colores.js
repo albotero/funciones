@@ -8,7 +8,7 @@
     ○ La letra s guardará el color naranjo.
     ○ La letra d guardará el color celeste.
     ○ Para guardar el color revisa el tip al final del enunciado.
-    ○ Creaunnuevodivconelid“key”,de200pxdeanchoyaltoyde
+    ○ Crea un nuevo div con el id “key”, de 200px de ancho y alto y de
     color blanco y borde negro.
     ○ Al presionar las teclas a, s o d, se deberá cambiar el color del div
     “key” a rosado, naranjo o celeste respectivamente.
@@ -24,24 +24,53 @@ const divs = [
 ]
 
 const keys = {
-  a: "pink",
-  s: "orange",
-  d: "#00aae4",
+  a: { color: "#ff83cc", newDiv: false },
+  s: { color: "darkorange", newDiv: false },
+  d: { color: "#25d7fa", newDiv: false },
+  q: { color: "#6d20d5", newDiv: true },
+  w: { color: "#aaa", newDiv: true },
+  e: { color: "#7c341b", newDiv: true },
 }
 
 const body = document.querySelector("body")
 body.style.display = "flex"
+body.style.flexWrap = "wrap"
 body.style.gap = "5px"
 
 const changeColor = (div, color) => (div.style.backgroundColor = color)
 
-divs.forEach(({ id, color }) => {
+const createDiv = ({ id, color, change = false }) => {
   const div = document.createElement("div")
-  div.id = id
+  if (id) div.id = id
   div.style.width = "200px"
   div.style.height = "200px"
-  div.style.cursor = "pointer"
+  if (change) {
+    div.style.cursor = "pointer"
+    div.addEventListener("click", (ev) => changeColor(ev.target, "black"))
+  }
   changeColor(div, color)
-  div.addEventListener("click", (ev) => changeColor(ev.target, "black"))
   body.appendChild(div)
+}
+
+divs.forEach((d) => createDiv({ ...d, change: true }))
+
+let selectedColor
+createDiv({ id: "key" })
+const keyDiv = document.getElementById("key")
+keyDiv.style.border = "1px solid black"
+keyDiv.style.backgroundColor = "white"
+
+document.addEventListener("keydown", function (event) {
+  const selection = keys[event.key]
+  if (selection) {
+    const { color, newDiv } = selection
+    if (newDiv) {
+      // Keys q, w, e
+      createDiv({ color })
+    } else {
+      // Keys a, s, d
+      selectedColor = color
+      keyDiv.style.backgroundColor = selectedColor
+    }
+  }
 })
